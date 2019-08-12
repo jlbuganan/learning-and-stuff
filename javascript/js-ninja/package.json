@@ -1,17 +1,14 @@
 {
-  "name": "basic-app001",
+  "name": "js-ninja",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jest"
   },
-  "keywords": [],
   "author": "Jerms Buganan <liljerms@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "jasmine": "^3.4.0",
-    "karma": "^4.2.0",
-    "nyc": "^14.1.1"
+    "jest": "^24.8.0"
   }
 }
