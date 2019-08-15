@@ -5,16 +5,19 @@
   <title>JS + CSS Clock</title>
 </head>
 <body>
-
-
-    <div class="clock">
-      <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
-      </div>
+  <div class="clock">
+    <div class="clock-text hour-text"></div>
+    <div class="clock-text minutes-text"></div>
+    <div class="clock-text seconds-text"></div>
+    <div class="clock-face">
+      <div class="hand hour-hand"></div>
+      <div class="hand min-hand"></div>
+      <div class="hand second-hand"></div>
+      <div class="clock-center"></div>
     </div>
+  </div>
 
+  <audio id="secondsTick" src="./../01 - JavaScript Drum Kit/sounds/tink.wav"></audio>
 
   <style>
     html {
@@ -34,11 +37,27 @@
       align-items: center;
     }
 
+    .clock-text {
+      color: white;
+      position: absolute;
+      font-size: 5rem;
+      top: calc(50% - 20px);
+    }
+    .seconds-text {
+      left: calc(50% + 50px);
+    }
+    .minutes-text {
+      left: calc(50% - 70px);
+    }
+    .hour-text {
+      left: calc(50% - 140px);
+    }
+
     .clock {
       width: 30rem;
       height: 30rem;
       border: 20px solid white;
-      border-radius: 50%;
+      border-radius: 30%;
       margin: 50px auto;
       position: relative;
       padding: 2rem;
@@ -56,19 +75,99 @@
       transform: translateY(-3px); /* account for the height of the clock hands */
     }
 
+    .clock-center {
+      width: 20px;
+      height: 20px;
+      background-color: red;
+      position: absolute;
+      top: calc(50% - 10px);
+      left: calc(50% - 10px);
+      border-radius: 50%;
+    }
+
     .hand {
       width: 50%;
       height: 6px;
       background: black;
       position: absolute;
       top: 50%;
+      border-radius: 8px;
+      transform-origin: 100%;
+      transform: rotate(90deg);
+      transition: all 0.25s;
+      transition-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+    .second-hand {
+      height: 3px;
+      background: red;
+    }
+    .hour-hand {
+      width: 30%;
+      left: 20%;
+      transform-origin: 100%;
+    }
+    .minute-hand {
+      width: 50%;
     }
 
   </style>
 
   <script>
+    const transitionTime = 0.25;
+    const secondHand = document.querySelector('.second-hand');
+    const minuteHand = document.querySelector('.min-hand');
+    const hourHand = document.querySelector('.hour-hand');
 
+    const secondsText = document.querySelector('.seconds-text');
+    const minutesText = document.querySelector('.minutes-text');
+    const hourText = document.querySelector('.hour-text');
+    const tick = document.querySelector('#secondsTick');
+    tick.volume = 0;
 
+    function setDate() {
+      const now = new Date();
+      const seconds = now.getSeconds();
+      const secondsDegrees = (seconds * 6) + 90;
+
+      const minutes = now.getMinutes();
+      const minutesDegrees = (minutes * 6) + 90;
+
+      const hour = now.getHours();
+      const hourDegrees = (hour * 30) + 90;
+
+      // Prevent the rotation going full backwards from 360 to 0 when the seconds reset
+      if (seconds === 0) {
+        secondHand.style.transition = 'all 0s';
+      } else {
+        secondHand.style.transition = `all ${ transitionTime }s`;
+      }
+
+      // Rotate hands
+      secondHand.style.transform = `rotate(${ secondsDegrees }deg)`;
+      secondsText.innerText = `:${padTwo(seconds)}`;
+
+      minuteHand.style.transform = `rotate(${ minutesDegrees }deg)`;
+      minutesText.innerText = padTwo(minutes);
+
+      hourHand.style.transform = `rotate(${ hourDegrees }deg)`;
+      hourText.innerText = `${padTwo(hour)}:`;
+
+      // Play sound
+      tick.currentTime = 0;
+      tick.play();
+
+      // 0 = 90 degrees
+      // 15 = 180 deg
+      // 30 = 270 deg
+      // 45 = 360 deg
+      // 60 = 90 deg
+    }
+
+    function padTwo(number) {
+      return ("0" + number).slice(-2);
+    }
+
+    setInterval(setDate, 1000);
   </script>
 </body>
 </html>
