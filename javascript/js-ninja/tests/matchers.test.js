@@ -1,7 +1,7 @@
-const sum = require('../src/misc/sum');
+const testFunctions = require('./../src/misc/test-functions');
 
 test('adds 1 + 2 to equal 3', () => {
-  expect(sum(1, 2)).toBe(3);
+  expect(testFunctions.sum(1, 2)).toBe(3);
 });
 
 test('object assignment', () => {
@@ -72,6 +72,6 @@ test('the shopping list has beer on it', () => {
   expect(new Set(shoppingList)).toContain('beer');
 });
 
-
-
-
+test('useless function invokes callback', () => {
+  expect(testFunctions.useless(function() { return 'domo arigato'; })).toMatch('domo arigato');
+});
