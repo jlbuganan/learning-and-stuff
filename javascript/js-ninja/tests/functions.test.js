@@ -1,3 +1,4 @@
+
 function foo1() { return true; }
 var foo2 = function() { return true; };
 window.foo3 = function foo4() { return true; };
@@ -13,4 +14,5 @@ test('should prove things about the way functions are declared', () => {
   expect(foo3.name).toBe('foo4');
   expect(typeof window.outer === 'function');
   expect(typeof window.inner === undefined);
+  expect(typeof inner === 'function');
 });
