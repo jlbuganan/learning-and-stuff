@@ -71,7 +71,3 @@ test('the shopping list has beer on it', () => {
   expect(shoppingList).toContain('beer');
   expect(new Set(shoppingList)).toContain('beer');
 });
-
-test('useless function invokes callback', () => {
-  expect(testFunctions.useless(function() { return 'domo arigato'; })).toMatch('domo arigato');
-});
