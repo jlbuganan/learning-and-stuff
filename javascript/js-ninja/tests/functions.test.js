@@ -1,30 +1,66 @@
-function foo1() {
+function v() {
   return this;
 }
-var foo2 = function() {
-  return this;
-};
-global.foo3 = function foo4() {
-  return true;
-};
-function outer() {
-  var inner = function() {
+test("outside", () => {
+  expect(v()).toBe(global);
+});
+
+(function() {
+  var t = function() {
     return this;
   };
-  test("inner is a function when tested within outer's context", () => {
-    expect(typeof inner).toBe("function");
-    expect(inner()).toBe(global); // But.. why?
-  });
-}
+  function u() {
+    return this;
+  }
+  this.a = 42;
 
-test("should prove things about the way functions are declared", () => {
-  expect(foo1()).toBe(global);
-  expect(foo2()).toBe(global);
-  expect(typeof global.foo1).toBe("undefined"); // Why doesn't it get attached to global?
-  expect(foo1.name).toBe("foo1");
-  expect(typeof global.foo3).toBe("function");
-  expect(foo2.name).toBe("foo2");
-  expect(foo3.name).toBe("foo4");
-  expect(typeof outer).toBe("function");
-  expect(typeof inner).toBe("undefined");
-});
+  test("inside", () => {
+    expect(t()).toBe(global);
+    expect(u()).toBe(global);
+    expect(global.a).toEqual(42);
+  });
+
+  var majin = {
+    boo: outer
+  };
+
+  test("should return 8", () => {
+    expect(majin.boo(3, 5)).toEqual(8);
+  });
+
+  function outer(x, y) {
+    // inner is attached to the function context
+    this.inner = function(a) {
+      return x + a;
+    };
+    // This is attached to the global context
+    function whatisthis() {
+      return this;
+    }
+    // This is attached to the function context
+    this.whatisthis2 = function() {
+      return this;
+    };
+
+    expect(whatisthis()).toBe(global);
+    expect(this.whatisthis2()).toBe(majin);
+
+    return this.inner(y);
+  }
+})();
+
+(function() {
+  "use strict";
+
+  global.x = function() {
+    return this;
+  };
+  var y = function() {
+    return this;
+  };
+
+  test("use strict", () => {
+    expect(global.x()).toBe(global);
+    expect(y() === undefined);
+  });
+})();
