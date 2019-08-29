@@ -1,19 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>HTML5 Canvas</title>
-</head>
-<body>
-<canvas id="draw" width="800" height="800"></canvas>
-<script>
-</script>
+  <head>
+    <meta charset="UTF-8" />
+    <title>HTML5 Canvas</title>
+  </head>
+  <body>
+    <canvas id="draw" width="800" height="800"></canvas>
 
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
+    <script>
+      const canvas = document.querySelector("#draw");
+      const context = canvas.getContext("2d");
 
-</body>
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+      let hue = 0;
+      let direction = true;
+
+      // Configure canvas
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.addEventListener("mousedown", e => {
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+        isDrawing = true;
+      });
+      canvas.addEventListener("mousemove", draw);
+      canvas.addEventListener("mouseup", () => (isDrawing = false));
+      canvas.addEventListener("mouseout", () => (isDrawing = false));
+
+      // Set properties
+      context.strokeStyle = "#BADA55";
+      context.lineJoin = "round";
+      context.lineCap = "round";
+      context.globalCompositeOperation = "multiply";
+
+      function draw(e) {
+        if (!isDrawing) {
+          return;
+        }
+        context.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+        context.beginPath();
+        context.moveTo(lastX, lastY);
+        context.lineTo(e.offsetX, e.offsetY);
+        context.stroke();
+        console.log(e);
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+
+        // Go through all the hsl hues
+        hue++;
+        if (hue > 360) {
+          hue = 0;
+        }
+
+        // Yoyo line width
+        direction =
+          context.lineWidth >= 100 || context.lineWidth <= 1
+            ? !direction
+            : direction;
+        direction ? context.lineWidth++ : context.lineWidth--;
+      }
+    </script>
+
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+    </style>
+  </body>
 </html>
